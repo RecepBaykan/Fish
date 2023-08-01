@@ -6,6 +6,7 @@ TagManager:
   tags:
   - path1
   - path2
+  - bubblePath
   layers:
   - Default
   - TransparentFX
