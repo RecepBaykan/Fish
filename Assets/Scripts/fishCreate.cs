@@ -30,11 +30,13 @@ public class fishCreate : MonoBehaviour
     [SerializeField] private GameObject[] fishes;
     [SerializeField] private GameObject[] lastPath;
 
-    [SerializeField] private Text Score;
+    [SerializeField] private TextMeshProUGUI Score;
     [SerializeField] private GameObject textScore;
     Animation scoreAnim;
     
     public static bool play;
+
+    [SerializeField] private GameObject bubble;
 
 
 
@@ -275,6 +277,7 @@ public class fishCreate : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
+            
             mouseP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             hit = Physics2D.Raycast(mouseP, Vector2.zero);
 
@@ -285,13 +288,19 @@ public class fishCreate : MonoBehaviour
                     if(hit.collider.gameObject.name == fishes[i].name)
                     {
                         pathLock[i] = false;
+                        
                         break;
                     }
                 }
+                
 
                 //Dokununca Skor puanını gösterir
+                GameObject bubbleClone = Instantiate(bubble);
+                bubbleClone.transform.position = hit.collider.gameObject.transform.position; 
+                //bubbleClone.GetComponent<ParticleSystem>().startColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f); 
+                
                
-               scoreAdd(hit.collider.gameObject);
+               scoreAdd(hit.collider.gameObject, bubbleClone);
 
                 Destroy(hit.collider.gameObject);
 
@@ -310,28 +319,31 @@ public class fishCreate : MonoBehaviour
     }
 
     Vector2 objVector;
-    void scoreAdd(GameObject obj){
+    void scoreAdd(GameObject obj, GameObject bubble){
                
             Score.text = (int.Parse(Score.text) + 
             int.Parse(hit.collider.gameObject.transform.GetChild(0).name)).ToString();
           
             GameObject go = Instantiate(textScore);
-            go.GetComponent<TextMeshPro>().text = int.Parse(hit.collider.gameObject.transform.GetChild(0).name).ToString();
-            go.transform.position = hit.collider.gameObject.transform.position;
+            go.transform.GetChild(0).GetComponent<TextMeshPro>().text = int.Parse(hit.collider.gameObject.transform.GetChild(0).name).ToString();
+            go.transform.position = new Vector2(obj.transform.position.x, obj.transform.position.y - 1f);
             objVector = new Vector2(go.transform.position.x, go.transform.position.y - 1.5f);
-            StartCoroutine(scoreDestroy(go, objVector));
+            StartCoroutine(scoreDestroy(go, objVector, bubble));
 
     }
 
 
-    IEnumerator scoreDestroy(GameObject obj, Vector2 vec)
+    IEnumerator scoreDestroy(GameObject obj, Vector2 vec, GameObject bubble)
     {
        
        
         
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.8f);
         Destroy(obj);
+        
+
+
     }
     
 

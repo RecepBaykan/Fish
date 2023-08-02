@@ -12,6 +12,8 @@ public class eventClass : MonoBehaviour
     [SerializeField] private GameObject pauseButton;
     [SerializeField] private GameObject restartButton;
 
+    [SerializeField] private GameObject score;
+
     
     public void play()
     {
@@ -19,6 +21,7 @@ public class eventClass : MonoBehaviour
         playButton.SetActive(false);
         pauseButton.SetActive(true);
         restartButton.SetActive(true);
+        score.SetActive(true);
         
 
     }
@@ -26,7 +29,7 @@ public class eventClass : MonoBehaviour
     public void pause()
     {
     
-        playButtonText.text = "resume";
+
          playButton.SetActive(true);
 
          fishCreate.play = false;
