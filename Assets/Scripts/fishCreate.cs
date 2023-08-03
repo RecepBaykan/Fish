@@ -10,7 +10,7 @@ public class fishCreate : MonoBehaviour
     [SerializeField] private List<string> fishesName;
     [SerializeField] private List<string> fishesScore;
     
-
+    [SerializeField] public static bool bombaGeliyor;
 
     [SerializeField] GameObject[] pathA;
     [SerializeField] GameObject[] pathB;
@@ -26,9 +26,11 @@ public class fishCreate : MonoBehaviour
 
 
     [SerializeField] private bool[] pathLock;
-    [SerializeField] private int pathLockCount = 5;
+    [SerializeField] public static int pathLockCount;
     [SerializeField] private GameObject[] fishes;
     [SerializeField] private GameObject[] lastPath;
+
+    public static bool setFish;
 
     [SerializeField] private TextMeshProUGUI Score;
     [SerializeField] private GameObject textScore;
@@ -38,6 +40,9 @@ public class fishCreate : MonoBehaviour
 
     [SerializeField] private GameObject bubble;
 
+    [SerializeField] private GameObject exp;
+   
+
 
 
 
@@ -46,10 +51,9 @@ public class fishCreate : MonoBehaviour
     void Start()
     {
         play = false;
-        pathLock = new bool[pathLockCount];
-        fishes = new GameObject[pathLock.Length];
-        lastPath = new GameObject[pathLock.Length];
-        moveSpeed = new float[pathLock.Length];
+        pathLockCount =4;
+        set();
+
 
 
         fishesName = new List<string>();
@@ -60,7 +64,9 @@ public class fishCreate : MonoBehaviour
        
 
         
-           
+
+
+
        path1 = "path1";
        path2 = "path2";
 
@@ -69,9 +75,57 @@ public class fishCreate : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if(int.Parse(Score.text)>= eventClass.hedefScore)
+        {
+            Score.color = Color.green;
+        }else
+        {
+             Score.color = Color.red;
+        }
         fishSpam();
-        move();
-        if(play)
+        
+        // Her 5 seviyede bir bomba gelir
+        if(!bombaGeliyor)
+        { 
+        
+            move();
+        }else
+        {
+            if(setFish)
+            {
+                // Tüm balıkları yok eder.
+                for(int i = 0; i<pathLock.Length; i++)
+                {
+                    if(pathLock[i])
+                    {
+                       
+                        GameObject bubbleClone = Instantiate(bubble);
+                        bubbleClone.transform.position = fishes[i].transform.position; 
+                        scoreAdd(fishes[i], bubbleClone);
+                        pathLock[i] = delete(fishes[i]);
+                        
+                    }
+                    
+                }
+
+                pathLockCount+=3;
+
+                // Yeniden balık sayısını ayarlar
+                set();
+                setFish = false;
+                bombaGeliyor = false;
+                eventClass.BombaGeldi = true;
+                eventClass.seviyeAtla = true;
+                
+            
+            }
+           
+           
+        }
+        
+        
+        if(play && !bombaGeliyor)
         {
             touch();
         }
@@ -82,6 +136,15 @@ public class fishCreate : MonoBehaviour
 
     }
 
+    void set()
+    {
+        
+        pathLock = new bool[pathLockCount];
+        fishes = new GameObject[pathLock.Length];
+        lastPath = new GameObject[pathLock.Length];
+        moveSpeed = new float[pathLock.Length];
+    }
+
     void fishSpam(){
         
         
@@ -89,9 +152,31 @@ public class fishCreate : MonoBehaviour
         {
             if(!pathLock[i]){
                 path();
-                moveSpeed[i] = Random.Range(0.09f, 0.76f);
+                moveSpeed[i] = Random.Range(0.01f, eventClass.level*0.2f*Time.deltaTime);
                 //Rastgele balık oluşturuluyor
-                int a = Random.Range(0, fishParent.transform.childCount);
+                int a = 0;
+                // Not: Switch Case
+                if(eventClass.level <6)
+                {
+                    a = Random.Range(0, 3);
+                }else
+                {
+                    if(eventClass.level<11)
+                    {
+                        a = Random.Range(0, 6);
+                    }else
+                    {
+                        int sans = Random.Range(0, 11);
+                        if(sans == 1)
+                        {
+                            a = Random.Range(8, 12);
+                        }else
+                        {
+                            a = Random.Range(0, 8);
+                        }
+                    }
+                }
+                
                 string UniqueID = System.Guid.NewGuid().ToString();
                 fishes[i] = Instantiate(fishParent.transform.GetChild(a).gameObject);
 
@@ -158,7 +243,7 @@ public class fishCreate : MonoBehaviour
         {
             if(fish == s)
             {
-                fishScore = (Mathf.Round((moveSpeed[i] * 100))).ToString();
+                fishScore = (Mathf.Round((moveSpeed[i] * 1500 + 8*eventClass.level))).ToString();
                 break;
             }else{
                 
@@ -239,8 +324,8 @@ public class fishCreate : MonoBehaviour
             {
                pathLock[i] = delete(fishes[i]);
             }else{
-                fishes[i].transform.position = Vector2.Lerp(fishes[i].transform.position, lastPath[i].transform.position, Time.deltaTime * moveSpeed[i]);
-            
+                fishes[i].transform.position = Vector2.MoveTowards(fishes[i].transform.position, lastPath[i].transform.position, moveSpeed[i]);
+                //fishes[i].transform.Translate(lastPath[i].transform.position* Time.deltaTime * moveSpeed[i]);
             }
 
 
@@ -275,38 +360,62 @@ public class fishCreate : MonoBehaviour
 
     void touch()
     {
-        if(Input.GetMouseButtonDown(0))
+        if((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) ||  Input.GetMouseButtonDown(0))
         {
             
             mouseP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             hit = Physics2D.Raycast(mouseP, Vector2.zero);
-
+           
             if(hit.collider !=null){
-                
+                int a = 0;
                 for(int i = 0; i<pathLock.Length;i++)
                 {
                     if(hit.collider.gameObject.name == fishes[i].name)
                     {
+
                         pathLock[i] = false;
+                        
+                        a = i;
                         
                         break;
                     }
                 }
                 
+                string name = hit.collider.gameObject.transform.GetChild(1).gameObject.name;
+                switch (name)
+                {
+                    case "timeBoost":
+                        touchTime.timeBoost = true;
+                        patlat();
+                        break;
 
-                //Dokununca Skor puanını gösterir
-                GameObject bubbleClone = Instantiate(bubble);
-                bubbleClone.transform.position = hit.collider.gameObject.transform.position; 
-                //bubbleClone.GetComponent<ParticleSystem>().startColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f); 
-                
+                    case "timeDown":
+                        touchTime.timeBoost = false;
+                        patlat();
+                        break;
+
+                    case "bomb":
+                    eventClass.GameOver = true;
+                            GameObject ex = Instantiate(exp);
+                            ex.transform.position = hit.collider.gameObject.transform.position;
+                            Destroy(hit.collider.gameObject);
+                            
+                        break;
+                    
+                    case "points":
+                        hit.collider.gameObject.transform.GetChild(0).gameObject.name = (int.Parse(hit.collider.gameObject.transform.GetChild(0).gameObject.name) + 100).ToString();
+                        patlat();
+                        break;
+
+                    case "baloon":
+                        
+
+                    default: 
+                        patlat();
+                        break;   
+
+                }
                
-               scoreAdd(hit.collider.gameObject, bubbleClone);
-
-                Destroy(hit.collider.gameObject);
-
-
-
-                
                 
                
                 
@@ -318,14 +427,28 @@ public class fishCreate : MonoBehaviour
 
     }
 
+
+    void patlat()
+    {
+          //Dokununca Skor puanını gösterir
+            GameObject bubbleClone = Instantiate(bubble);
+            bubbleClone.transform.position = hit.collider.gameObject.transform.position; 
+            //bubbleClone.GetComponent<ParticleSystem>().startColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f); 
+                
+               
+            scoreAdd(hit.collider.gameObject, bubbleClone);
+
+            Destroy(hit.collider.gameObject);
+    }
+
     Vector2 objVector;
     void scoreAdd(GameObject obj, GameObject bubble){
                
             Score.text = (int.Parse(Score.text) + 
-            int.Parse(hit.collider.gameObject.transform.GetChild(0).name)).ToString();
+            int.Parse(obj.transform.GetChild(0).name)).ToString();
           
             GameObject go = Instantiate(textScore);
-            go.transform.GetChild(0).GetComponent<TextMeshPro>().text = int.Parse(hit.collider.gameObject.transform.GetChild(0).name).ToString();
+            go.transform.GetChild(0).GetComponent<TextMeshPro>().text = int.Parse(obj.transform.GetChild(0).name).ToString();
             go.transform.position = new Vector2(obj.transform.position.x, obj.transform.position.y - 1f);
             objVector = new Vector2(go.transform.position.x, go.transform.position.y - 1.5f);
             StartCoroutine(scoreDestroy(go, objVector, bubble));
@@ -345,6 +468,9 @@ public class fishCreate : MonoBehaviour
 
 
     }
+
+
+    
     
 
 
