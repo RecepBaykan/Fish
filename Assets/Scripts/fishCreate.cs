@@ -51,7 +51,7 @@ public class fishCreate : MonoBehaviour
     void Start()
     {
         play = false;
-        pathLockCount =4;
+        pathLockCount = 10;
         set();
 
 
@@ -127,7 +127,7 @@ public class fishCreate : MonoBehaviour
         
         if(play && !bombaGeliyor)
         {
-            touch();
+            //touch();
         }
         
        
@@ -188,8 +188,8 @@ public class fishCreate : MonoBehaviour
                 GameObject score = new GameObject(earnFishScore(fishes[i].name, i));
                 
                 
-                score.transform.parent = fishes[i].transform;
                 color.transform.parent = fishes[i].transform;
+                score.transform.parent = fishes[i].transform;
 
                 fishes[i].name = System.Guid.NewGuid().ToString();
 
@@ -209,7 +209,7 @@ public class fishCreate : MonoBehaviour
                  // Balığı Döndürme 
                 if(fishes[i].transform.position.x > 0){
 
-                    fishes[i].transform.GetComponent<SpriteRenderer>().flipX = true;
+                    //fishes[i].transform.GetComponent<SpriteRenderer>().flipX = true;
                 }
                
 
@@ -318,17 +318,26 @@ public class fishCreate : MonoBehaviour
     {
         for(int i = 0; i<pathLock.Length; i++)
         {
-              if(pathLock[i]){
             
-            if(distance( fishes[i].transform.position, lastPath[i].transform.position) || fishes[i] == null)
+            if(fishes[i] != null)
             {
+                if(pathLock[i]){
+            
+                if(distance( fishes[i].transform.position, lastPath[i].transform.position) || fishes[i] == null)
+                {
                pathLock[i] = delete(fishes[i]);
-            }else{
+                }else{
                 fishes[i].transform.position = Vector2.MoveTowards(fishes[i].transform.position, lastPath[i].transform.position, moveSpeed[i]);
                 //fishes[i].transform.Translate(lastPath[i].transform.position* Time.deltaTime * moveSpeed[i]);
+                }
             }
+            
+            
 
 
+        }else
+        {
+            pathLock[i] = false;
         }
         }
     }
@@ -357,10 +366,10 @@ public class fishCreate : MonoBehaviour
 
     RaycastHit2D hit;
     Vector2 mouseP;
-
+    
     void touch()
     {
-        if((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) ||  Input.GetMouseButtonDown(0))
+        if(  (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) &&  Input.GetMouseButtonDown(0))
         {
             
             mouseP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
