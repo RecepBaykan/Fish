@@ -7,15 +7,15 @@ using TMPro;
 public class baloon : MonoBehaviour
 {
 
-    
+    //[SerializeField] private destroy _destroy;
 
     [SerializeField] private GameObject bubble;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private GameObject scoreAnim;
     
-    bool igneHareketi;
-    bool patladi;
-    string name;
+    [SerializeField] private bool igneHareketi;
+   [SerializeField] private  bool patladi;
+    [SerializeField] private string name;
     
     GameObject parentDiken;
     GameObject parentKonum;
@@ -138,7 +138,7 @@ public class baloon : MonoBehaviour
     {
         hit = Physics2D.Raycast(childDiken.transform.position, Vector2.zero);
             {
-                if(hit.collider != null)
+                if(hit.collider != null && hit.collider.gameObject.active)
                 {
 
                     if(hit.collider.gameObject.name != name)
@@ -186,6 +186,9 @@ public class baloon : MonoBehaviour
             parentDiken.transform.SetParent(null);
             parentKonum.transform.SetParent(null);
 
+            parentDiken.AddComponent<destroy>();
+            parentKonum.AddComponent<destroy>();
+
             for(int i = 0; i<parentDiken.transform.childCount; i++)
             {
                 parentDiken.transform.GetChild(i).gameObject.tag = "diken";
@@ -224,18 +227,12 @@ public class baloon : MonoBehaviour
             scoreText = GameObject.Find("scoreText").GetComponent<TextMeshProUGUI>();
             GameObject scoreAnimeClone = Instantiate(scoreAnim);
             scoreAnimeClone.transform.position = new Vector2(transform.position.x, transform.position.y-0.9f);
-            try
-            {
-            
-                scoreAnimeClone.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = 50.ToString(); /*transform.GetChild(3).gameObject.name;*/
-                scoreText.text = (int.Parse(scoreText.text) + 50 /*int.Parse(transform.GetChild(3).gameObject.name*/).ToString();
            
-            }
-            catch (System.IndexOutOfRangeException ex)
-            {
-                
-            }
             
+            scoreAnimeClone.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = (0.02*1500 + 8*eventClass.level).ToString(); /*transform.GetChild(3).gameObject.name;*/
+            scoreText.text = (int.Parse(scoreText.text) + 0.02*1500 + 8*eventClass.level).ToString();
+           
+           
             
             Destroy(gameObject);
         }   

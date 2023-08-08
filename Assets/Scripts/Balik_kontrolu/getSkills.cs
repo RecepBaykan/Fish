@@ -39,7 +39,7 @@ public class getSkills : MonoBehaviour
             (slotClone.transform.GetChild(0).gameObject.GetComponent<RectTransform>().sizeDelta.x/2,
             slotClone.transform.GetChild(0).gameObject.GetComponent<RectTransform>().sizeDelta.y/2
             );
-            slotClone.transform.parent = view.transform;
+            slotClone.transform.SetParent(view.transform);
 
 
 

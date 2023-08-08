@@ -10,7 +10,7 @@ public class scoreAnimStop : MonoBehaviour
     {
        
         // Animator Controller'da bulunan animasyonu başlatın.
-        animator.Play("score");
+        //animator.Play("score");
     }
 
     void Update()

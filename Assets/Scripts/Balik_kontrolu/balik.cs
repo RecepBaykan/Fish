@@ -9,6 +9,8 @@ public class balik : MonoBehaviour
     [SerializeField] private GameObject bubble;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private GameObject scoreAnim;
+
+    string name;
     
     // Start is called before the first frame update
     void Start()
@@ -18,6 +20,7 @@ public class balik : MonoBehaviour
         {
             gameObject.GetComponent<SpriteRenderer>().flipX = true;
         }
+        name = gameObject.name;
     }
 
     // Update is called once per frame
@@ -38,9 +41,9 @@ public class balik : MonoBehaviour
     
     {
 
-        if(gameObject.transform.GetChild(0).name == "key")
+        if(gameObject.transform.GetChild(0).name == "key" || eventClass.DragAndDrop)
         {
-            fark = (Vector2)((Camera.main.ScreenToWorldPoint(Input.mousePosition))- transform.position);
+            fark = (Vector2)((Camera.main.ScreenToWorldPoint(Input.mousePosition)));
         }
         
 
@@ -62,7 +65,16 @@ public class balik : MonoBehaviour
         scoreAnimeClone.transform.position = new Vector2(transform.position.x, transform.position.y-0.9f);
         scoreAnimeClone.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = transform.GetChild(1).gameObject.name;
         gameObject.SetActive(false);
-        scoreText.text = (int.Parse(scoreText.text) + int.Parse(transform.GetChild(1).gameObject.name)).ToString();
+        if(fishCreate.pointBoost)
+        {
+            scoreAnimeClone.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = (2 * int.Parse(transform.GetChild(1).gameObject.name)).ToString();
+            scoreText.text = (int.Parse(scoreText.text) + (2)*(int.Parse(transform.GetChild(1).gameObject.name))).ToString();
+        }else
+        {
+            scoreText.text = (int.Parse(scoreText.text) + int.Parse(transform.GetChild(1).gameObject.name)).ToString();
+            scoreAnimeClone.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = transform.GetChild(1).gameObject.name;
+        }
+       
 
         Destroy(gameObject);
         
@@ -72,24 +84,42 @@ public class balik : MonoBehaviour
     }
 
     Vector2 fark;
+    RaycastHit2D hit;
+    
     void OnMouseDrag() {
 
-      if(gameObject.transform.GetChild(0).name == "key")
+      if(gameObject.transform.GetChild(0).name == "key" || eventClass.DragAndDrop)
       {
-        transform.position = (Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition)) - fark;
+        transform.position = (Vector2)(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+       
       }
       
         
     }
 
     private void OnMouseUp() {
+
+        if(eventClass.DragAndDrop)
+        {
+            hit = Physics2D.Raycast(transform.position, Vector2.zero);
+            if(hit.collider != null)
+            {
+                if(hit.collider.gameObject.name != name)
+                {
+                    Debug.Log(hit.collider.gameObject.name);
+                }
+               
+            }
+        }
         
         if(gameObject.transform.GetChild(0).name == "key")
         {
+
+            // Hit.collider kullanılacak.
             try
                 {
                     if(Vector2.Distance(GameObject.Find("chest").transform.position, 
-                    gameObject.transform.GetChild(0).transform.position)<0.9f)
+                        gameObject.transform.GetChild(0).transform.position)<0.9f)
                     {
                         Destroy(GameObject.Find("chest"));
                     }

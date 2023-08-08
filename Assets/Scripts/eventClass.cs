@@ -4,11 +4,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using GoogleMobileAds.Api;
+using GoogleMobileAds;
+
 
 public class eventClass : MonoBehaviour 
 {
     public static bool GameOver;
     public static bool seviyeAtla;
+
+    public static bool DragAndDrop;
     
     [SerializeField] private GameObject highScore;
     [SerializeField] private GameObject highScoreText;
@@ -16,6 +21,8 @@ public class eventClass : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playButtonText;
     [SerializeField] private GameObject pauseButton;
     [SerializeField] private GameObject restartButton;
+
+    [SerializeField] private GameObject adsPlayButton;
  
 
     [SerializeField] private GameObject score;
@@ -37,6 +44,9 @@ public class eventClass : MonoBehaviour
     [SerializeField] private TextMeshProUGUI hedefScoreYazisi;
     [SerializeField] public static int hedefScore = 100;
     bool seviyeGosterildi;
+
+
+    public static int fishing;
     
 
     
@@ -44,7 +54,8 @@ public class eventClass : MonoBehaviour
     
     void Start()
     {
-        
+        fishing = 0;
+        LoadInterstitialAd();
         GameOver = false;
         gameOver.SetActive(false);
         level = 1;
@@ -55,11 +66,28 @@ public class eventClass : MonoBehaviour
     }
 
 
+    public void adsButton()
+    {
+        ShowAd();
+        RegisterEventHandlers(interstitialAd);
+        
+     // yeni reklamı yeniden yükle
+       
+        
+
+
+        
+       
+    }
+
+   
+
    
     void Update()
     {
 
-            
+           
+
         
             if(seviyeAtla)
             {   
@@ -86,6 +114,10 @@ public class eventClass : MonoBehaviour
         
         if(GameOver)
         {
+            
+            
+           
+            
             touchTime.durdur = true;
             touchTime.sureOlc = true;
             gameOver.SetActive(true);
@@ -102,6 +134,17 @@ public class eventClass : MonoBehaviour
                 }
             }
             highScore.SetActive(true);
+
+            
+            if(interstitialAd.CanShowAd())
+            {
+                adsPlayButton.SetActive(true);
+            }else
+            {
+                adsPlayButton.SetActive(false);
+            }
+           
+           
             
             
         }
@@ -116,6 +159,8 @@ public class eventClass : MonoBehaviour
     
     public void play()
     {
+
+        
        
         
         if(Time.timeScale == 0)
@@ -127,7 +172,7 @@ public class eventClass : MonoBehaviour
 
         hedefScoreObject.SetActive(true);
         highScore.SetActive(false);
-        //fishCreate.play = true;
+        fishCreate.play = true;
         if(!seviyeGosterildi)
         {
             seviyeGoster();
@@ -143,6 +188,7 @@ public class eventClass : MonoBehaviour
         restartButton.SetActive(true);
         score.SetActive(true);
         touchTime.durdur = false;
+        touchTime.sureOlc = false;
         
      
         
@@ -200,6 +246,70 @@ public class eventClass : MonoBehaviour
     }
 
 
+    private InterstitialAd interstitialAd;
+    private string _adUnitId = "ca-app-pub-5842976809574805/1268131122"; 
+
+
+   
+
+     public void LoadInterstitialAd()
+  {
+      // Clean up the old ad before loading a new one.
+      if (interstitialAd != null)
+      {
+            interstitialAd.Destroy();
+            interstitialAd = null;
+      }
+
+      Debug.Log("Loading the interstitial ad.");
+
+      // create our request used to load the ad.
+      var adRequest = new AdRequest();
+      adRequest.Keywords.Add("unity-admob-sample");
+
+      // send the request to load the ad.
+      InterstitialAd.Load(_adUnitId, adRequest,
+          (InterstitialAd ad, LoadAdError error) =>
+          {
+              // if error is not null, the load request failed.
+              if (error != null || ad == null)
+              {
+                  Debug.LogError("interstitial ad failed to load an ad " +
+                                 "with error : " + error);
+                  return;
+              }
+
+              Debug.Log("Interstitial ad loaded with response : "
+                        + ad.GetResponseInfo());
+
+              interstitialAd = ad;
+          });
+  }
+
+    public static bool showAds;
+    public void ShowAd()
+    {
+    if (interstitialAd != null && interstitialAd.CanShowAd())
+    {
+        
+        Debug.Log("Showing interstitial ad.");
+        interstitialAd.Show();
+        
+    
+        
+    }
+    else
+    {
+        
+        Debug.LogError("Interstitial ad is not ready yet.");
+        showAds = false;
+        
+    }
+}
+
+
+
+
     [SerializeField] private GameObject bombaObj;
     [SerializeField] private GameObject bombaYazisi;
     [SerializeField] private GameObject konum;
@@ -207,7 +317,19 @@ public class eventClass : MonoBehaviour
     [SerializeField] private GameObject patlama;
     
 
-
+    private void RegisterEventHandlers(InterstitialAd ad)
+    {
+    
+    // Raised when the ad closed full screen content.
+    ad.OnAdFullScreenContentClosed += () =>
+    {
+        GameOver = false;
+        gameOver.SetActive(false);
+        play();
+    };
+    
+}
+   
     
 
 

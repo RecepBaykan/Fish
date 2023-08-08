@@ -14,7 +14,13 @@ public class touchTime : MonoBehaviour
     public static bool durdur = false;
     public static bool timeBoost = false;
     public static bool timeDown = false;
-    float sure;
+    public static float sure;
+
+    public static bool isGameOver;
+
+    [SerializeField] private GameObject stray;
+
+    public static bool frozenTime;
 
     // Start is called before the first frame update
     void Start()
@@ -25,11 +31,11 @@ public class touchTime : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(skills.frozenTime)
+        if(fishCreate.play && frozenTime)
         {
             if(!sureOlc)
             {
-                sure = 10f;
+                
                 sureOlc = true;
                  
             }else
@@ -37,7 +43,14 @@ public class touchTime : MonoBehaviour
                 if(sure <=0)
                 {
                     sureOlc = false;
-                    skills.frozenTime = false;
+                    frozenTime = false;
+                    for(int i = 0; i< stray.transform.childCount; i++)
+                    {
+                        if(stray.transform.GetChild(i).name == "frozeTime")
+                        {
+                            Destroy(stray.transform.GetChild(i).gameObject);
+                        }
+                    }
                 }else
                 {
                     sure -= Time.deltaTime;
@@ -77,8 +90,14 @@ public class touchTime : MonoBehaviour
                
             }else
             {
-                eventClass.GameOver = true;
-                timeElapsed = 20f;
+
+                if(timeElapsed <=0)
+                {
+                    eventClass.GameOver = true;
+                    timeElapsed = 20f;
+                    
+                }
+                
              
             }
 

@@ -48,7 +48,7 @@ public class RayCastTouch : MonoBehaviour
         
         
         
-        if((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)/*Input.GetMouseButtonDown(0)*/)
+        if((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) || Input.GetMouseButtonDown(0))
         {
             touchP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             hit = Physics2D.Raycast(touchP, Vector2.zero);

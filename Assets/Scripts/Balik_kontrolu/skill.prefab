@@ -44,4 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d7e04666e74ea74f80564acc91c1a52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewTray: {fileID: 0}
+  straySkill: {fileID: 0}
+  straySkillSlot: {fileID: 2629634058018952218, guid: dfd3f774e1edc8c4ba89ade59f74feab, type: 3}
   roket: {fileID: 6996190346588985481, guid: f7b3437f84e8820408632a98dd2bf93e, type: 3}
+  rocket: {fileID: 8757947771526584824, guid: 3dc34308fe58ffa4d97b3d1de043ed0d, type: 3}
+  frozeTime: {fileID: 2629634058018952218, guid: 853a9109594a5f946bc77ea3037f8c5f, type: 3}
+  speedsBoost: {fileID: 2629634058018952218, guid: c7d356267137a34419fddb9750e5df59, type: 3}
+  pointsBoost: {fileID: 2629634058018952218, guid: c5f3a3f4e034c5546a98f03417914b75, type: 3}
