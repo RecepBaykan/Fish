@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class baloon : MonoBehaviour
 {
@@ -8,6 +10,8 @@ public class baloon : MonoBehaviour
     
 
     [SerializeField] private GameObject bubble;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private GameObject scoreAnim;
     
     bool igneHareketi;
     bool patladi;
@@ -15,24 +19,35 @@ public class baloon : MonoBehaviour
     
     GameObject parentDiken;
     GameObject parentKonum;
+
     // Start is called before the first frame update
     void Start()
     {
+    
+        name = gameObject.name;
+        parentDiken = gameObject.transform.GetChild(0).gameObject;
         //Balığın başlangıç yönünü ayarla
         if(transform.position.x >3)
         {
-            gameObject.GetComponent<SpriteRenderer>().flipX = true;
+            this.gameObject.GetComponent<SpriteRenderer>().flipX = true;
             for(int i = 0; i<transform.GetChild(0).transform.childCount; i++)
             {
                 transform.GetChild(0).transform.GetChild(i).GetComponent<SpriteRenderer>().flipX = true;
+              
             }
         }
+        
       
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(roketSkill.roketGeliyor)
+        {
+            delete();
+        }
+
         if(igneHareketi)
         {
             //Debug.Log(parentDiken.transform.childCount);
@@ -41,7 +56,24 @@ public class baloon : MonoBehaviour
                 dikenFirlat(parentDiken.transform.childCount);
             }
             
+        }else
+        {
+            foreach(GameObject diken in GameObject.FindGameObjectsWithTag("diken"))
+            {
+                if(Mathf.Abs(transform.position.x - diken.transform.position.x)<=0.4f &&
+                Mathf.Abs(transform.position.y - diken.transform.position.y)<=0.4f)
+                {
+                    diken.SetActive(false);
+                    OnMouseDown();
+                }
+            }
         }
+
+        
+        
+        
+            
+        
        
         
     }
@@ -51,7 +83,11 @@ public class baloon : MonoBehaviour
         if(fishCreate.play && !patladi)
         {
             patladi = true;
-            set();
+            if(gameObject !=null)
+            {
+                set();
+            }
+           
             
             
         }
@@ -80,7 +116,11 @@ public class baloon : MonoBehaviour
             if(childDiken != null && childDiken.transform.position != childKonum.transform.position)
             {
                 childDiken.transform.position = Vector2.Lerp(childDiken.transform.position, childKonum.transform.position, 4f*Time.deltaTime);
-                hitting();
+                if(childDiken.active)
+                {
+                    hitting();
+                }
+                
                 
 
                 if(Vector2.Distance(childDiken.transform.position, childKonum.transform.position)<0.2f)
@@ -103,12 +143,27 @@ public class baloon : MonoBehaviour
 
                     if(hit.collider.gameObject.name != name)
                     {
-                        
-                        if(childDiken.active)
+
+                        if(hit.collider.gameObject.tag == "baloon" ||
+                          hit.collider.gameObject.name == "chest" || 
+                        hit.collider.gameObject.name == "balina") 
                         {
+                            
+                        }else
+                        {
+
+
                             Instantiate(bubble).transform.position = hit.transform.position;
+                            GameObject scoreAnimeClone = Instantiate(scoreAnim);
+                            scoreAnimeClone.transform.position = new Vector2(hit.collider.gameObject.transform.position.x,hit.collider.gameObject.transform.position.y-0.9f);
+                            scoreAnimeClone.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = transform.GetChild(1).gameObject.name;
+                            //gameObject.SetActive(false);
+                            scoreText = GameObject.Find("scoreText").GetComponent<TextMeshProUGUI>();
+                            scoreText.text = (int.Parse(scoreText.text) + int.Parse(transform.GetChild(1).gameObject.name)).ToString();
+                            
                             Destroy(hit.collider.gameObject);
                             childDiken.SetActive(false);
+                            
                         }
                         
                        
@@ -123,13 +178,19 @@ public class baloon : MonoBehaviour
     }
 
 
-
+    bool sahip;
     void set()
         {
             parentDiken = transform.GetChild(0).gameObject;
             parentKonum = transform.GetChild(1).gameObject;
             parentDiken.transform.SetParent(null);
             parentKonum.transform.SetParent(null);
+
+            for(int i = 0; i<parentDiken.transform.childCount; i++)
+            {
+                parentDiken.transform.GetChild(i).gameObject.tag = "diken";
+
+            }
             //parentDiken.transform.position = transform.GetChild(0).gameObject.transform.position;
             //parentKonum.transform.position = transform.GetChild(1).gameObject.transform.position;
             igneHareketi = true;
@@ -154,6 +215,29 @@ public class baloon : MonoBehaviour
                 Destroy(gameObject);
             
             });
+        }
+
+       
+        void delete()
+        {
+            Instantiate(bubble).transform.position = transform.position;
+            scoreText = GameObject.Find("scoreText").GetComponent<TextMeshProUGUI>();
+            GameObject scoreAnimeClone = Instantiate(scoreAnim);
+            scoreAnimeClone.transform.position = new Vector2(transform.position.x, transform.position.y-0.9f);
+            try
+            {
+            
+                scoreAnimeClone.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = 50.ToString(); /*transform.GetChild(3).gameObject.name;*/
+                scoreText.text = (int.Parse(scoreText.text) + 50 /*int.Parse(transform.GetChild(3).gameObject.name*/).ToString();
+           
+            }
+            catch (System.IndexOutOfRangeException ex)
+            {
+                
+            }
+            
+            
+            Destroy(gameObject);
         }   
 
 

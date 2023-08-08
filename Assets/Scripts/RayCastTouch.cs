@@ -1,12 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class RayCastTouch : MonoBehaviour
 {
     // Algılmama ve dokunma ile ilgili değişkenler
     RaycastHit2D hit;
     Vector2 touchP;
+
+    // TextMesh Score
+    [SerializeField] private TextMeshProUGUI Score;
+    [SerializeField] private GameObject textScore;
     
     // Dokunulan nesnenin özelliklerini alma;
     string color;
@@ -16,7 +22,7 @@ public class RayCastTouch : MonoBehaviour
 
     // Baloncuk prefab
     [SerializeField] private GameObject bubble;
-    GameObject bubbleClone;
+    
 
 
     void Start()
@@ -27,7 +33,7 @@ public class RayCastTouch : MonoBehaviour
     
     void Update()
     {
-        if(fishCreate.play && !fishCreate.bombaGeliyor)
+        if(fishCreate.play)
         {
             raycast();
         }
@@ -39,7 +45,10 @@ public class RayCastTouch : MonoBehaviour
 
     void raycast()
     {
-        if((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) ||  Input.GetMouseButtonDown(0))
+        
+        
+        
+        if((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)/*Input.GetMouseButtonDown(0)*/)
         {
             touchP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             hit = Physics2D.Raycast(touchP, Vector2.zero);
@@ -47,11 +56,11 @@ public class RayCastTouch : MonoBehaviour
             if(hit.collider != null)
             {
                 
-                //color = hit.collider.gameObject.transform.GetChild(0).name;
-                //point = hit.collider.gameObject.transform.GetChild(1).name;
+                color = hit.collider.gameObject.transform.GetChild(0).name;
+                point = hit.collider.gameObject.transform.GetChild(1).name;
+                Vector2 vect = hit.collider.gameObject.transform.position;
+                //earnScore(point, vect);
 
-                //Destroy(hit.collider.gameObject);
-                //deleteObject(hit.collider.gameObject.transform.GetChild(0).gameObject, (Vector2) hit.collider.gameObject.transform.position);
                 
                 
             }
@@ -67,18 +76,13 @@ public class RayCastTouch : MonoBehaviour
     
     
     
-    void earnScore(string point)
+    void earnScore(string point, Vector2 vect)
     {
-
+        
+            
     }
 
     
     
-    void deleteObject(GameObject go, Vector2 vect)
-    {
-        Destroy(go);
-        GameObject bubbleClonee = Instantiate(bubble);
-        bubbleClonee.transform.position = vect;
-                
-    }
+ 
 }

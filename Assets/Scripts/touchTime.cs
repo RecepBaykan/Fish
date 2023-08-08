@@ -14,6 +14,7 @@ public class touchTime : MonoBehaviour
     public static bool durdur = false;
     public static bool timeBoost = false;
     public static bool timeDown = false;
+    float sure;
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +25,25 @@ public class touchTime : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(skills.frozenTime)
+        {
+            if(!sureOlc)
+            {
+                sure = 10f;
+                sureOlc = true;
+                 
+            }else
+            {
+                if(sure <=0)
+                {
+                    sureOlc = false;
+                    skills.frozenTime = false;
+                }else
+                {
+                    sure -= Time.deltaTime;
+                }
+            }
+        }
 
         if(timeBoost)
         {
@@ -45,28 +64,23 @@ public class touchTime : MonoBehaviour
         if(timeElapsed <=0)
         {
            
-           if(int.Parse(score.text) >= int.Parse(hedefScore.text))
-           {
-                if(eventClass.level % 5 == 0)
-                {
-                    fishCreate.bombaGeliyor = true;
-                    timeElapsed  = 20f;
-                    sureOlc = true;
-                }else
-                {
-                    eventClass.seviyeAtla = true;
-                    timeElapsed = 20f;
-                }
+            if(int.Parse(score.text) >= int.Parse(hedefScore.text))
+            {
+                
+                
+                eventClass.seviyeAtla = true;
+                timeElapsed = 20f;
+                
                 
                 
                 
                
-           }else
-           {
-             eventClass.GameOver = true;
-             timeElapsed = 20f;
+            }else
+            {
+                eventClass.GameOver = true;
+                timeElapsed = 20f;
              
-           }
+            }
 
         }else
         {

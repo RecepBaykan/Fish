@@ -1,0 +1,130 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7750649799490429096
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7750649799490429098}
+  - component: {fileID: 7750649799490429137}
+  - component: {fileID: 7750649799490429097}
+  - component: {fileID: 7750649799490429100}
+  - component: {fileID: 7750649799490429101}
+  - component: {fileID: 7750649799490429138}
+  m_Layer: 0
+  m_Name: event
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7750649799490429098
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7750649799490429096}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.8702776, y: 0.7528582, z: 0.03464554}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7750649799490429137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7750649799490429096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8425acf03b01c747b229b233ac56bda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Score: {fileID: 0}
+  textScore: {fileID: 8131182537068353210, guid: d5dc18eaf45a392418426fa31c5d5a13, type: 3}
+  bubble: {fileID: 527066471649269379, guid: 6da79a5b678189741bebfb66de29c8c0, type: 3}
+--- !u!114 &7750649799490429097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7750649799490429096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 846e989677c037d4ab8c035ddc65e5c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fishParent: {fileID: 8651308730930084847, guid: 242506f1ba1935a41a7fe86c65ee1549, type: 3}
+  pathParent: {fileID: 0}
+  fishCount: 10
+  specialParent: {fileID: 5524945824512825831, guid: ff7a55a42ec391a4c85495d42f2180d8, type: 3}
+  specialOn: 1
+--- !u!114 &7750649799490429100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7750649799490429096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd92c32f0e6a5ee4fbd563810970168f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  highScore: {fileID: 0}
+  highScoreText: {fileID: 0}
+  playButton: {fileID: 0}
+  playButtonText: {fileID: 0}
+  pauseButton: {fileID: 0}
+  restartButton: {fileID: 0}
+  score: {fileID: 0}
+  time: {fileID: 0}
+  gameOver: {fileID: 0}
+  gameOverScore: {fileID: 0}
+  lastestScore: {fileID: 0}
+  seviyeYazisi: {fileID: 0}
+  seviyeSayisi: {fileID: 0}
+  hedefScoreObject: {fileID: 0}
+  hedefScoreYazisi: {fileID: 0}
+  bombaObj: {fileID: 0}
+  bombaYazisi: {fileID: 0}
+  konum: {fileID: 0}
+  konumTemp: {x: 0, y: 0}
+  patlama: {fileID: 139366, guid: 95a7d9a11ef5ecf4eb9d74a837b0ef60, type: 3}
+--- !u!114 &7750649799490429101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7750649799490429096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b1b957bd27c2414696d301c4076b0cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  time: {fileID: 0}
+  score: {fileID: 0}
+  hedefScore: {fileID: 0}
+--- !u!114 &7750649799490429138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7750649799490429096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d7e04666e74ea74f80564acc91c1a52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roket: {fileID: 6996190346588985481, guid: f7b3437f84e8820408632a98dd2bf93e, type: 3}

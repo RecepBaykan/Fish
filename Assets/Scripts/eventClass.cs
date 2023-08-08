@@ -39,7 +39,7 @@ public class eventClass : MonoBehaviour
     bool seviyeGosterildi;
     
 
-    public static bool BombaGeldi;
+    
 
     
     void Start()
@@ -49,7 +49,7 @@ public class eventClass : MonoBehaviour
         gameOver.SetActive(false);
         level = 1;
         hedefScoreYazisi.text = $"{hedefScore}";
-        konumTemp = bombaObj.transform.position;
+      
         
         
     }
@@ -61,17 +61,14 @@ public class eventClass : MonoBehaviour
 
             
         
-            if(seviyeAtla && !fishCreate.bombaGeliyor)
+            if(seviyeAtla)
             {   
            
-            
-            
-                bombaObj.transform.position = konumTemp;
                 fishCreate.play = false;
                 seviyeAtla = false;
                 touchTime.sureOlc = true;
                 time.SetActive(false);
-                level +=1; 
+                level ++; 
                 
                 hedefScore = (int)(hedefScore);
                 hedefScoreYazisi.text = $"{hedefScore}";
@@ -84,13 +81,6 @@ public class eventClass : MonoBehaviour
             }
         
 
-        if(fishCreate.bombaGeliyor)
-        {
-            
-            bombaObj.SetActive(true);
-            bombaYazisi.SetActive(true);
-            bomba();
-        }
 
         
         
@@ -111,7 +101,7 @@ public class eventClass : MonoBehaviour
                     PlayerPrefs.SetString("high", lastestScore.text);
                 }
             }
-        highScore.SetActive(true);
+            highScore.SetActive(true);
             
             
         }
@@ -166,12 +156,7 @@ public class eventClass : MonoBehaviour
 
     public void pause()
     {
-    
-
-        if(fishCreate.bombaGeliyor)
-        {
-            Time.timeScale = 0;
-        }
+        Time.timeScale = 0;
         touchTime.durdur = true;
         playButton.SetActive(true);
 
@@ -220,38 +205,7 @@ public class eventClass : MonoBehaviour
     [SerializeField] private GameObject konum;
     [SerializeField] private Vector2 konumTemp;
     [SerializeField] private GameObject patlama;
-    void bomba()
-    {
-        if(bombaObj.transform.position == konum.transform.position)
-        {
-            
-            fishCreate.setFish = true;
-            
-            GameObject p = Instantiate(patlama);
-            p.transform.localScale = new Vector2(2f, 2f);
-            p.transform.position = new Vector2(konum.transform.position.x - 0.5f, konum.transform.position.y + 2f);
-            this.Wait(2f, () => {
-                Destroy(p);
-            }); 
-            bombaObj.SetActive(false);
-            bombaYazisi.SetActive(false);;
-            
-            
-            }else
-        {
-            if(Vector2.Distance(bombaObj.transform.position, konum.transform.position)<0.2f)
-            {
-                bombaObj.transform.position = konum.transform.position;
-            }else
-            {
-                bombaObj.transform.position = Vector2.Lerp(bombaObj.transform.position, konum.transform.position, 2f*Time.deltaTime);
-            }
-            
-        }
-        
-        
-       
-    }
+    
 
 
     

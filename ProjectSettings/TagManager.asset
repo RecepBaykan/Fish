@@ -8,6 +8,7 @@ TagManager:
   - path2
   - bubblePath
   - baloon
+  - diken
   layers:
   - Default
   - TransparentFX

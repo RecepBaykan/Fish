@@ -42,7 +42,8 @@ QualitySettings:
     asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
     customRenderPipeline: {fileID: 0}
-    excludedTargetPlatforms: []
+    excludedTargetPlatforms:
+    - Server
   - serializedVersion: 2
     name: Low
     pixelLightCount: 0
@@ -229,7 +230,7 @@ QualitySettings:
     customRenderPipeline: {fileID: 0}
     excludedTargetPlatforms: []
   m_PerPlatformDefaultQuality:
-    Android: 2
+    Android: 1
     GameCoreScarlett: 5
     GameCoreXboxOne: 5
     Lumin: 5
