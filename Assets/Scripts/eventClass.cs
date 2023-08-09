@@ -16,7 +16,7 @@ public class eventClass : MonoBehaviour
     public static bool DragAndDrop;
     
     [SerializeField] private GameObject highScore;
-    [SerializeField] private GameObject highScoreText;
+    [SerializeField] private TextMeshProUGUI highScoreText;
     [SerializeField] private GameObject playButton;
     [SerializeField] private TextMeshProUGUI playButtonText;
     [SerializeField] private GameObject pauseButton;
@@ -54,8 +54,20 @@ public class eventClass : MonoBehaviour
     
     void Start()
     {
+        
+
+        if(PlayerPrefs.GetString("high") == null)
+        {
+            highScoreText.text = "0";
+            
+        }else
+        {
+            highScoreText.text = PlayerPrefs.GetString("high");
+        }
+
         fishing = 0;
         LoadInterstitialAd();
+        LoadRewardedAd();
         GameOver = false;
         gameOver.SetActive(false);
         level = 1;
@@ -68,6 +80,7 @@ public class eventClass : MonoBehaviour
 
     public void adsButton()
     {
+        //ShowAd();
         ShowAd();
         RegisterEventHandlers(interstitialAd);
         
@@ -98,7 +111,7 @@ public class eventClass : MonoBehaviour
                 time.SetActive(false);
                 level ++; 
                 
-                hedefScore = (int)(hedefScore);
+                hedefScore = (int)(hedefScore + hedefScore*0.6);
                 hedefScoreYazisi.text = $"{hedefScore}";
                 seviyeSayisi.text = level.ToString();
                 seviyeGoster();
@@ -121,9 +134,11 @@ public class eventClass : MonoBehaviour
             touchTime.durdur = true;
             touchTime.sureOlc = true;
             gameOver.SetActive(true);
+            restartButton.SetActive(false);
+            pauseButton.SetActive(false);
             gameOverScore.text = lastestScore.text;
             fishCreate.play = false;
-            if(PlayerPrefs.GetString("high") == "")
+            if(PlayerPrefs.GetString("high") == null)
             {
                 PlayerPrefs.SetString("high", lastestScore.text);
             }else
@@ -131,6 +146,7 @@ public class eventClass : MonoBehaviour
                 if(int.Parse(PlayerPrefs.GetString("high"))<int.Parse(lastestScore.text))
                 {
                     PlayerPrefs.SetString("high", lastestScore.text);
+                    highScoreText.text =  PlayerPrefs.GetString("high");
                 }
             }
             highScore.SetActive(true);
@@ -247,7 +263,7 @@ public class eventClass : MonoBehaviour
 
 
     private InterstitialAd interstitialAd;
-    private string _adUnitId = "ca-app-pub-5842976809574805/1268131122"; 
+     private string _adUnitId = "ca-app-pub-3940256099942544/5224354917";
 
 
    
@@ -310,11 +326,48 @@ public class eventClass : MonoBehaviour
 
 
 
-    [SerializeField] private GameObject bombaObj;
+    /*[SerializeField] private GameObject bombaObj;
     [SerializeField] private GameObject bombaYazisi;
     [SerializeField] private GameObject konum;
     [SerializeField] private Vector2 konumTemp;
-    [SerializeField] private GameObject patlama;
+    [SerializeField] private GameObject patlama;*/
+
+    private RewardedAd rewardedAd;
+
+
+  public void LoadRewardedAd()
+  {
+      // Clean up the old ad before loading a new one.
+      if (rewardedAd != null)
+      {
+            rewardedAd.Destroy();
+            rewardedAd = null;
+      }
+
+      Debug.Log("Loading the rewarded ad.");
+
+      // create our request used to load the ad.
+      var adRequest = new AdRequest();
+      adRequest.Keywords.Add("unity-admob-sample");
+
+      // send the request to load the ad.
+      RewardedAd.Load(_adUnitId, adRequest,
+          (RewardedAd ad, LoadAdError error) =>
+          {
+              // if error is not null, the load request failed.
+              if (error != null || ad == null)
+              {
+                  Debug.LogError("Rewarded ad failed to load an ad " +
+                                 "with error : " + error);
+                  return;
+              }
+
+              Debug.Log("Rewarded ad loaded with response : "
+                        + ad.GetResponseInfo());
+
+              rewardedAd = ad;
+          });
+  }
     
 
     private void RegisterEventHandlers(InterstitialAd ad)
@@ -323,11 +376,28 @@ public class eventClass : MonoBehaviour
     // Raised when the ad closed full screen content.
     ad.OnAdFullScreenContentClosed += () =>
     {
+        interstitialAd.Destroy();
+        LoadInterstitialAd();
         GameOver = false;
         gameOver.SetActive(false);
-        play();
+        pause();
     };
     
+}
+
+public void ShowRewardedAd()
+{
+    const string rewardMsg =
+        "Rewarded ad rewarded the user. Type: {0}, amount: {1}.";
+
+    if (rewardedAd != null && rewardedAd.CanShowAd())
+    {
+        rewardedAd.Show((Reward reward) =>
+        {
+            // TODO: Reward the user.
+            //Debug.Log(string.Format(rewardMsg, reward.Type, reward.Amount));
+        });
+    }
 }
    
     

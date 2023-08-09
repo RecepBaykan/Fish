@@ -91,18 +91,22 @@ public class touchTime : MonoBehaviour
             }else
             {
 
-                if(timeElapsed <=0)
-                {
-                    eventClass.GameOver = true;
-                    timeElapsed = 20f;
+                
+                eventClass.GameOver = true;
+                timeElapsed = 20f;
                     
-                }
+                    
+                
                 
              
             }
 
         }else
-        {
+        {   
+            if(!eventClass.GameOver)
+            {
+                time.text = ((int)(timeElapsed)).ToString();
+            } 
             
             sureDusur();
             

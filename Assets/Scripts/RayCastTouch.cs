@@ -18,17 +18,8 @@ public class RayCastTouch : MonoBehaviour
     string color;
     string point;
     
-    
-
-    // Baloncuk prefab
-    [SerializeField] private GameObject bubble;
-    
 
 
-    void Start()
-    {
-        
-    }
 
     
     void Update()
@@ -48,7 +39,7 @@ public class RayCastTouch : MonoBehaviour
         
         
         
-        if((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) || Input.GetMouseButtonDown(0))
+       if((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began))
         {
             touchP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             hit = Physics2D.Raycast(touchP, Vector2.zero);
@@ -59,7 +50,7 @@ public class RayCastTouch : MonoBehaviour
                 color = hit.collider.gameObject.transform.GetChild(0).name;
                 point = hit.collider.gameObject.transform.GetChild(1).name;
                 Vector2 vect = hit.collider.gameObject.transform.position;
-                //earnScore(point, vect);
+              
 
                 
                 
@@ -76,11 +67,7 @@ public class RayCastTouch : MonoBehaviour
     
     
     
-    void earnScore(string point, Vector2 vect)
-    {
-        
-            
-    }
+   
 
     
     

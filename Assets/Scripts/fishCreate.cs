@@ -4,16 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+
+
 public class fishCreate : MonoBehaviour
 {        
     [SerializeField] private GameObject fishParent; // Balıkların çekileceği prefab
     [SerializeField] private GameObject pathParent; // Balıkların gideceği pathler
 
     [SerializeField] public  int fishCount; // Oyunda toplam oluşacak balık sayısı
-    private bool[] pathLock; // Pathlerin durumu
-    private GameObject[] fishes; // Balıkların kontrol altına alınacağı dizi
-    private GameObject[] lastPath; // Balıkların son gideceği durak
-    private float[] moveSpeed; // Balıkların rastgele oluşacağı hız bilgisi
+    private List<bool> pathLock; // Pathlerin durumu
+    private List<GameObject> fishes; // Balıkların kontrol altına alınacağı dizi
+    private List<GameObject> lastPath; // Balıkların son gideceği durak
+    private List<float> moveSpeed; // Balıkların rastgele oluşacağı hız bilgisi
     public static bool play;
 
     public static bool speedSlow;
@@ -28,6 +30,10 @@ public class fishCreate : MonoBehaviour
     [SerializeField] private bool speciaComing;
 
     [SerializeField] private GameObject stray;
+
+    [SerializeField] private GameObject roket;
+
+    public bool fishCreating = false;
 
     
 
@@ -48,15 +54,20 @@ public class fishCreate : MonoBehaviour
   
     void Update()
     {
-
-        fishSpam();
+        specialControl();
+        if(fishCreating)
+        {
+          
+            fishSpam(); 
+        }
+        
         if(roketSkill.roketGeliyor)
         {
             
         }else
         {
             
-                
+            
                 
             if(speedSlow && play )
             {
@@ -102,11 +113,16 @@ public class fishCreate : MonoBehaviour
                 }
             }
                 
+            if(fishCreating)
+            {
+                move();
+            }
             
-            move();
             
            
         }
+
+        
         
        
     }
@@ -117,10 +133,24 @@ public class fishCreate : MonoBehaviour
     void set()
     {
         
-        pathLock = new bool[fishCount];
-        fishes = new GameObject[fishCount];
-        lastPath = new GameObject[fishCount];
-        moveSpeed = new float[fishCount];
+        pathLock = new List<bool>();
+        fishes = new List<GameObject>();
+        lastPath = new List<GameObject>();
+        moveSpeed = new List<float>();
+        Fishing(fishCount);
+    }
+
+    void Fishing(int count)
+    {
+        for(int i = 0; i<count; i++)
+        {
+            pathLock.Add(false);
+            fishes.Add(null);
+            lastPath.Add(null);
+            moveSpeed.Add(0);
+            
+        }
+        fishCreating = true;
     }
 
     void fishSpam(){
@@ -128,23 +158,35 @@ public class fishCreate : MonoBehaviour
         
         for (int i = 0; i < fishCount; i++)
         {
+            
             if(!pathLock[i]){
+                
+                
 
-                moveSpeed[i] = Random.Range(0.01f, eventClass.level*0.2f*Time.deltaTime);
+                moveSpeed[i] =  Random.Range(0.01f, eventClass.level*0.2f*Time.deltaTime);
                 //Rastgele balık oluşturuluyor
                 
-                specialControl();
+                
                 
                 if(specialOn)
                 {
-                    fishIndex = 4;//Random.Range(0, specialParent.transform.childCount);
+                    fishIndex = Random.Range(0, specialParent.transform.childCount);
+                    fishes[i] = null;
                     fishes[i] = Instantiate(specialParent.transform.GetChild(fishIndex).gameObject);
                     fishes[i].name = specialParent.transform.GetChild(fishIndex).name;
+                    
+                    if(fishIndex == 3)
+                    {
+                        moveSpeed[i] = moveSpeed[i]*1.5f;
+                    }
+                    
                     specialOn = false;
+
                     
                 }else
                 {
                     fishIndex = Random.Range(0, 8);
+                    fishes[i] = null;
                     fishes[i] = Instantiate(fishParent.transform.GetChild(fishIndex).gameObject);
                     fishes[i].name = fishParent.transform.GetChild(fishIndex).name;
                     
@@ -177,7 +219,7 @@ public class fishCreate : MonoBehaviour
     string earnFishScore(string s, int i)
     {
         
-        fishScore = (Mathf.Round((moveSpeed[i] * 1500 + 8*eventClass.level))).ToString();
+        fishScore = (Mathf.Round((moveSpeed[i] * 1000 + eventClass.level*2.5f))).ToString();
         return fishScore;
         
     }
@@ -216,7 +258,7 @@ public class fishCreate : MonoBehaviour
 
     void move()
     {
-        for(int i = 0; i<pathLock.Length; i++)
+        for(int i = 0; i<fishCount; i++)
         {
             
             //pointTemp = fishes[i].transform.GetChild(1).gameObject.name;
@@ -229,12 +271,15 @@ public class fishCreate : MonoBehaviour
                     
                     if(distance( fishes[i].transform.position, lastPath[i].transform.position) || fishes[i] == null)
                     {
+
+                        
                         pathLock[i] = delete(fishes[i]);
+                        
                     }else
                     {
                         speedTemp = moveSpeed[i];
                         bonusControl(moveSpeed[i], i);
-                    fishes[i].transform.position = Vector2.MoveTowards(fishes[i].transform.position, lastPath[i].transform.position, moveSpeed[i]);
+                        fishes[i].transform.position = Vector2.MoveTowards(fishes[i].transform.position, lastPath[i].transform.position, moveSpeed[i]);
                         moveSpeed[i] = speedTemp;
                     //fishes[i].transform.Translate(lastPath[i].transform.position* Time.deltaTime * moveSpeed[i]);
                     }
@@ -243,6 +288,7 @@ public class fishCreate : MonoBehaviour
                 }
             }else
             {
+                
                 pathLock[i] = false;
             }
         }
@@ -267,22 +313,53 @@ public class fishCreate : MonoBehaviour
 
     }
 
+    int tempLevel;
     void specialControl()
     {
-        if(eventClass.level % 5 == 0)
+        if(eventClass.level % 1 == 0)
         {
             if(!speciaComing)
             {
+                tempLevel = eventClass.level;
                 specialOn = true;
                         
             }
+            
+            
             speciaComing = true;
                     
+        }
+        
+           if(eventClass.level != tempLevel)
+           {
+                speciaComing = false;
+           }
+           
+            
+        
+
+        if(eventClass.level % 5 == 0)
+        {
+            if(!levelCome)
+            {
+                fishCreating = false;
+                Debug.Log($"balık sayısı: {fishes.Count} hiz sayisi: {moveSpeed.Count} ");
+                Debug.Log($"yol sayısı: {lastPath.Count} kilit sayisi: {pathLock.Count} ");
+                fishCreating = false;
+                fishCount +=2;
+                Fishing(2);
+                
+                levelCome = true;
+
+            }
+            
+
         }else
         {
-            speciaComing = false;
+            levelCome = false;
         }
     }
+    bool levelCome = false;
 
     
     

@@ -30,9 +30,10 @@ public class skills : MonoBehaviour
         slot = EventSystem.current.currentSelectedGameObject;
         straySkill = GameObject.Find("stray");
         
-
-        switch (slot.transform.GetChild(0).gameObject.name)
+        if(fishCreate.play)
         {
+            switch (slot.transform.GetChild(0).gameObject.name)
+            {
             
             case "roket":
             roketSkill();
@@ -53,7 +54,9 @@ public class skills : MonoBehaviour
 
             default:
             break;
+            }
         }
+        
     }
 
 
