@@ -8,13 +8,13 @@ using GoogleMobileAds.Api;
 using GoogleMobileAds;
 
 
-public class eventClass : MonoBehaviour 
+public class eventClass : MonoBehaviour
 {
     public static bool GameOver;
     public static bool seviyeAtla;
 
     public static bool DragAndDrop;
-    
+
     [SerializeField] private GameObject highScore;
     [SerializeField] private TextMeshProUGUI highScoreText;
     [SerializeField] private GameObject playButton;
@@ -23,22 +23,22 @@ public class eventClass : MonoBehaviour
     [SerializeField] private GameObject restartButton;
 
     [SerializeField] private GameObject adsPlayButton;
- 
+
 
     [SerializeField] private GameObject score;
-    
+
 
     [SerializeField] private GameObject time;
 
 
-    [SerializeField] private  GameObject gameOver;
-    [SerializeField] private  TextMeshProUGUI gameOverScore;
-    [SerializeField] private  TextMeshProUGUI lastestScore;
+    [SerializeField] private GameObject gameOver;
+    [SerializeField] private TextMeshProUGUI gameOverScore;
+    [SerializeField] private TextMeshProUGUI lastestScore;
 
 
     [SerializeField] private GameObject seviyeYazisi;
     [SerializeField] private TextMeshProUGUI seviyeSayisi;
-    [SerializeField] public static int level;
+    [SerializeField] public static int level = 1;
 
     [SerializeField] private GameObject hedefScoreObject;
     [SerializeField] private TextMeshProUGUI hedefScoreYazisi;
@@ -47,34 +47,31 @@ public class eventClass : MonoBehaviour
 
 
     public static int fishing;
-    
 
-    
 
-    
     void Start()
     {
-        
-
-        if(PlayerPrefs.GetString("high") == null)
-        {
-            highScoreText.text = "0";
-            
-        }else
-        {
-            highScoreText.text = PlayerPrefs.GetString("high");
-        }
+        hedefScore = 100;
+        level = 1;
+        hedefScoreYazisi.text = $"{hedefScore}";
 
         fishing = 0;
         LoadInterstitialAd();
         LoadRewardedAd();
         GameOver = false;
         gameOver.SetActive(false);
-        level = 1;
-        hedefScoreYazisi.text = $"{hedefScore}";
-      
-        
-        
+        if(string.IsNullOrEmpty(PlayerPrefs.GetString("high")))
+        {
+            highScoreText.text = "0";
+                 
+        }else
+        {
+            
+            highScoreText.text = PlayerPrefs.GetString("high");
+                 
+             
+        }
+
     }
 
 
@@ -83,54 +80,44 @@ public class eventClass : MonoBehaviour
         //ShowAd();
         ShowAd();
         RegisterEventHandlers(interstitialAd);
-        
-     // yeni reklamı yeniden yükle
-       
-        
 
 
-        
-       
+        // yeni reklamı yeniden yükle
     }
 
-   
 
-   
     void Update()
     {
-
-           
-
-        
-            if(seviyeAtla)
-            {   
-           
-                fishCreate.play = false;
-                seviyeAtla = false;
-                touchTime.sureOlc = true;
-                time.SetActive(false);
-                level ++; 
-                
-                hedefScore = (int)(hedefScore + hedefScore*0.6);
-                hedefScoreYazisi.text = $"{hedefScore}";
-                seviyeSayisi.text = level.ToString();
-                seviyeGoster();
-            
-           
-            }else{
-                
-            }
-        
-
-
-        
-        
-        if(GameOver)
+        if (seviyeAtla)
         {
-            
-            
-           
-            
+            fishCreate.play = false;
+            seviyeAtla = false;
+            touchTime.sureOlc = true;
+            time.SetActive(false);
+            level++;
+
+            hedefScore = (int)(hedefScore + hedefScore * 0.6);
+            hedefScoreYazisi.text = $"{hedefScore}";
+            seviyeSayisi.text = level.ToString();
+            seviyeGoster();
+        }
+        else
+        {
+        }
+
+
+        if (GameOver)
+        {
+            if (interstitialAd.CanShowAd())
+            {
+                adsPlayButton.SetActive(true);
+            }
+            else
+            {
+                adsPlayButton.SetActive(false);
+            }
+
+
             touchTime.durdur = true;
             touchTime.sureOlc = true;
             gameOver.SetActive(true);
@@ -138,64 +125,43 @@ public class eventClass : MonoBehaviour
             pauseButton.SetActive(false);
             gameOverScore.text = lastestScore.text;
             fishCreate.play = false;
-            if(PlayerPrefs.GetString("high") == null)
-            {
-                PlayerPrefs.SetString("high", lastestScore.text);
-            }else
-            {
-                if(int.Parse(PlayerPrefs.GetString("high"))<int.Parse(lastestScore.text))
-                {
-                    PlayerPrefs.SetString("high", lastestScore.text);
-                    highScoreText.text =  PlayerPrefs.GetString("high");
-                }
-            }
+            if(string.IsNullOrEmpty(PlayerPrefs.GetString("high")))
+             {
+                 PlayerPrefs.SetString("high", lastestScore.text);
+                 
+             }else
+             {
+                 if(int.Parse(PlayerPrefs.GetString("high"))<int.Parse(lastestScore.text))
+                 {
+                     PlayerPrefs.SetString("high", lastestScore.text);
+                     highScoreText.text =  PlayerPrefs.GetString("high");
+                 }
+             }
             highScore.SetActive(true);
-
-            
-            if(interstitialAd.CanShowAd())
-            {
-                adsPlayButton.SetActive(true);
-            }else
-            {
-                adsPlayButton.SetActive(false);
-            }
-           
-           
-            
-            
         }
-
-        
     }
 
 
-    
-
-    
-    
     public void play()
     {
-
-        
-       
-        
-        if(Time.timeScale == 0)
+        if (Time.timeScale == 0)
         {
             Time.timeScale = 1;
         }
 
-        
 
         hedefScoreObject.SetActive(true);
         highScore.SetActive(false);
         fishCreate.play = true;
-        if(!seviyeGosterildi)
+        if (!seviyeGosterildi)
         {
             seviyeGoster();
-        }else
-        {
-            fishCreate.play = true; 
         }
+        else
+        {
+            fishCreate.play = true;
+        }
+
         seviyeGosterildi = true;
 
 
@@ -205,15 +171,6 @@ public class eventClass : MonoBehaviour
         score.SetActive(true);
         touchTime.durdur = false;
         touchTime.sureOlc = false;
-        
-     
-        
-       
-       
-        
-
-        
-
     }
 
     public void pause()
@@ -225,105 +182,84 @@ public class eventClass : MonoBehaviour
         fishCreate.play = false;
         pauseButton.SetActive(false);
         restartButton.SetActive(false);
-
-        
-
-
-        
-       
-        
     }
 
     public void restart()
     {
-        seviyeGosterildi = false;
+       
         SceneManager.LoadScene("game", LoadSceneMode.Single);
-       
-       
     }
-
 
 
     void seviyeGoster()
     {
-        seviyeYazisi.SetActive(true);    
-        
-        
+        seviyeYazisi.SetActive(true);
+
+
         this.Wait(1.8f, () =>
         {
-           fishCreate.play = true;
-           seviyeYazisi.SetActive(false);
-           touchTime.sureOlc = false;
-           time.SetActive(true);
-
-
+            fishCreate.play = true;
+            seviyeYazisi.SetActive(false);
+            touchTime.sureOlc = false;
+            time.SetActive(true);
         });
-
     }
 
 
     private InterstitialAd interstitialAd;
-     private string _adUnitId = "ca-app-pub-3940256099942544/5224354917";
+    private string _adUnitId = "ca-app-pub-3940256099942544/1033173712";
 
 
-   
-
-     public void LoadInterstitialAd()
-  {
-      // Clean up the old ad before loading a new one.
-      if (interstitialAd != null)
-      {
+    public void LoadInterstitialAd()
+    {
+        // Clean up the old ad before loading a new one.
+        if (interstitialAd != null)
+        {
             interstitialAd.Destroy();
             interstitialAd = null;
-      }
+        }
 
-      Debug.Log("Loading the interstitial ad.");
+        Debug.Log("Loading the interstitial ad.");
 
-      // create our request used to load the ad.
-      var adRequest = new AdRequest();
-      adRequest.Keywords.Add("unity-admob-sample");
+        // create our request used to load the ad.
+        var adRequest = new AdRequest();
+        adRequest.Keywords.Add("unity-admob-sample");
 
-      // send the request to load the ad.
-      InterstitialAd.Load(_adUnitId, adRequest,
-          (InterstitialAd ad, LoadAdError error) =>
-          {
-              // if error is not null, the load request failed.
-              if (error != null || ad == null)
-              {
-                  Debug.LogError("interstitial ad failed to load an ad " +
-                                 "with error : " + error);
-                  return;
-              }
+        // send the request to load the ad.
+        InterstitialAd.Load(_adUnitId, adRequest,
+            (InterstitialAd ad, LoadAdError error) =>
+            {
+                // if error is not null, the load request failed.
+                if (error != null || ad == null)
+                {
+                    Debug.LogError("interstitial ad failed to load an ad " +
+                                   "with error : " + error);
+                    return;
+                }
 
-              Debug.Log("Interstitial ad loaded with response : "
-                        + ad.GetResponseInfo());
+                Debug.Log("Interstitial ad loaded with response : "
+                          + ad.GetResponseInfo());
 
-              interstitialAd = ad;
-          });
-  }
+                interstitialAd = ad;
+            });
+    }
 
     public static bool showAds;
+
     public void ShowAd()
     {
-    if (interstitialAd != null && interstitialAd.CanShowAd())
-    {
-        
-        Debug.Log("Showing interstitial ad.");
-        interstitialAd.Show();
-        
-    
-        
+        Debug.Log(interstitialAd.CanShowAd());
+        if (interstitialAd != null && interstitialAd.CanShowAd())
+        {
+            Debug.Log("Showing interstitial ad.");
+            interstitialAd.Show();
+        }
+        else
+        {
+            Debug.LogError("Interstitial ad is not ready yet.");
+            showAds = false;
+        }
     }
-    else
-    {
-        
-        Debug.LogError("Interstitial ad is not ready yet.");
-        showAds = false;
-        
-    }
-}
-
-
 
 
     /*[SerializeField] private GameObject bombaObj;
@@ -335,72 +271,66 @@ public class eventClass : MonoBehaviour
     private RewardedAd rewardedAd;
 
 
-  public void LoadRewardedAd()
-  {
-      // Clean up the old ad before loading a new one.
-      if (rewardedAd != null)
-      {
+    public void LoadRewardedAd()
+    {
+        // Clean up the old ad before loading a new one.
+        if (rewardedAd != null)
+        {
             rewardedAd.Destroy();
             rewardedAd = null;
-      }
+        }
 
-      Debug.Log("Loading the rewarded ad.");
+        Debug.Log("Loading the rewarded ad.");
 
-      // create our request used to load the ad.
-      var adRequest = new AdRequest();
-      adRequest.Keywords.Add("unity-admob-sample");
+        // create our request used to load the ad.
+        var adRequest = new AdRequest();
+        adRequest.Keywords.Add("unity-admob-sample");
 
-      // send the request to load the ad.
-      RewardedAd.Load(_adUnitId, adRequest,
-          (RewardedAd ad, LoadAdError error) =>
-          {
-              // if error is not null, the load request failed.
-              if (error != null || ad == null)
-              {
-                  Debug.LogError("Rewarded ad failed to load an ad " +
-                                 "with error : " + error);
-                  return;
-              }
+        // send the request to load the ad.
+        RewardedAd.Load(_adUnitId, adRequest,
+            (RewardedAd ad, LoadAdError error) =>
+            {
+                // if error is not null, the load request failed.
+                if (error != null || ad == null)
+                {
+                    Debug.LogError("Rewarded ad failed to load an ad " +
+                                   "with error : " + error);
+                    return;
+                }
 
-              Debug.Log("Rewarded ad loaded with response : "
-                        + ad.GetResponseInfo());
+                Debug.Log("Rewarded ad loaded with response : "
+                          + ad.GetResponseInfo());
 
-              rewardedAd = ad;
-          });
-  }
-    
+                rewardedAd = ad;
+            });
+    }
+
 
     private void RegisterEventHandlers(InterstitialAd ad)
     {
-    
-    // Raised when the ad closed full screen content.
-    ad.OnAdFullScreenContentClosed += () =>
-    {
-        interstitialAd.Destroy();
-        LoadInterstitialAd();
-        GameOver = false;
-        gameOver.SetActive(false);
-        pause();
-    };
-    
-}
-
-public void ShowRewardedAd()
-{
-    const string rewardMsg =
-        "Rewarded ad rewarded the user. Type: {0}, amount: {1}.";
-
-    if (rewardedAd != null && rewardedAd.CanShowAd())
-    {
-        rewardedAd.Show((Reward reward) =>
+        // Raised when the ad closed full screen content.
+        ad.OnAdFullScreenContentClosed += () =>
         {
-            // TODO: Reward the user.
-            //Debug.Log(string.Format(rewardMsg, reward.Type, reward.Amount));
-        });
+            interstitialAd.Destroy();
+            LoadInterstitialAd();
+            GameOver = false;
+            gameOver.SetActive(false);
+            pause();
+        };
     }
-}
-   
-    
 
+    public void ShowRewardedAd()
+    {
+        const string rewardMsg =
+            "Rewarded ad rewarded the user. Type: {0}, amount: {1}.";
 
+        if (rewardedAd != null && rewardedAd.CanShowAd())
+        {
+            rewardedAd.Show((Reward reward) =>
+            {
+                // TODO: Reward the user.
+                //Debug.Log(string.Format(rewardMsg, reward.Type, reward.Amount));
+            });
+        }
+    }
 }

@@ -47,7 +47,9 @@ public class fishCreate : MonoBehaviour
         play = false;
         speedTime = 10f;
         pointTime = 10f;
+        speciaComing = true;
         set();
+
 
     }
 

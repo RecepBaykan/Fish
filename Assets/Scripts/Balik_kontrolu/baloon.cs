@@ -212,11 +212,7 @@ public class baloon : MonoBehaviour
             parentDiken.AddComponent<destroy>();
             parentKonum.AddComponent<destroy>();
 
-            for(int i = 0; i<parentDiken.transform.childCount; i++)
-            {
-                parentDiken.transform.GetChild(i).gameObject.tag = "diken";
-
-            }
+          
             //parentDiken.transform.position = transform.GetChild(0).gameObject.transform.position;
             //parentKonum.transform.position = transform.GetChild(1).gameObject.transform.position;
             igneHareketi = true;

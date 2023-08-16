@@ -26,7 +26,7 @@ public class RayCastTouch : MonoBehaviour
     {
         if(fishCreate.play)
         {
-            raycast();
+            //raycast();
         }
         
     }
